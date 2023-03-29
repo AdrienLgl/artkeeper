@@ -107,4 +107,6 @@ void Error_Handler(void);
 }
 #endif
 
+extern uint64_t tick_1000ms_elapsed;
+
 #endif /* __MAIN_H */

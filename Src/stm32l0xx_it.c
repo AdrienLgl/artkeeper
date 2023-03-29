@@ -44,6 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
  uint8_t g_rxCarUSART2;
+ static volatile uint32_t ms_ticks = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -125,6 +126,14 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
+
+	// each ms
+	ms_ticks++;
+
+	// each second
+	if (ms_ticks % 1000 == 0) {
+		tick_1000ms_elapsed = 1;
+	}
 
   /* USER CODE END SysTick_IRQn 0 */
 
