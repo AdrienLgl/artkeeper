@@ -131,7 +131,7 @@ void SysTick_Handler(void)
 	ms_ticks++;
 
 	// each second
-	if (ms_ticks % 1000 == 0) {
+	if (ms_ticks % 100 == 0) {
 		tick_1000ms_elapsed = 1;
 	}
 

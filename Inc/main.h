@@ -1,5 +1,23 @@
 /* USER CODE BEGIN Header */
 /**
+ * @mainpage  ArtKeeper
+ *
+ *            Offrez à vos précieuses œuvres d'art une protection de super-héros
+ *            avec notre système électronique qui détecte même les tentatives les plus
+ *            sournoises de vol et maintient leur environnement en mode de confort optimal.
+ *
+ *            Détection de la variation dans la pièce de :
+ *
+ *              - température
+ *              - luminosité
+ *              - pression
+ *
+ *            pour conserver les oeuvres d'art dans des conditions optimales et empêcher le vol.
+ *
+ *            © By Romain GRAYE & Adrien LAIGLE - Grpe 9 - 3AFISA
+ *
+ */
+/**
   ******************************************************************************
   * @file           : main.h
   * @brief          : Header for main.c file.
@@ -48,6 +66,8 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include "artkeeper.h"
 
 /* USER CODE END Includes */
 

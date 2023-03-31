@@ -18,8 +18,9 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_pwr.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_dma.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_usart.h \
- ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_gpio.h ../Inc/adc.h \
- ../Inc/main.h ../Inc/usart.h ../Inc/gpio.h ../Inc/getch.h
+ ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_gpio.h \
+ ../Inc/artkeeper.h ../Inc/adc.h ../Inc/main.h ../Inc/usart.h \
+ ../Inc/gpio.h ../Inc/getch.h
 ../Inc/main.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_adc.h:
 ../Drivers/CMSIS/Device/ST/STM32L0xx/Include/stm32l0xx.h:
@@ -41,6 +42,7 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_dma.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_usart.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_gpio.h:
+../Inc/artkeeper.h:
 ../Inc/adc.h:
 ../Inc/main.h:
 ../Inc/usart.h:

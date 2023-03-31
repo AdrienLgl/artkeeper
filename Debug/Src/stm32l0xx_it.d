@@ -19,7 +19,7 @@ Src/stm32l0xx_it.o: ../Src/stm32l0xx_it.c ../Inc/main.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_dma.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_usart.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_gpio.h \
- ../Inc/stm32l0xx_it.h ../Inc/usart.h ../Inc/main.h
+ ../Inc/artkeeper.h ../Inc/stm32l0xx_it.h ../Inc/usart.h ../Inc/main.h
 ../Inc/main.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_adc.h:
 ../Drivers/CMSIS/Device/ST/STM32L0xx/Include/stm32l0xx.h:
@@ -41,6 +41,7 @@ Src/stm32l0xx_it.o: ../Src/stm32l0xx_it.c ../Inc/main.h \
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_dma.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_usart.h:
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_gpio.h:
+../Inc/artkeeper.h:
 ../Inc/stm32l0xx_it.h:
 ../Inc/usart.h:
 ../Inc/main.h:

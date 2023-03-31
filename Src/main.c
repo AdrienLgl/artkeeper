@@ -50,12 +50,13 @@
 /* USER CODE BEGIN PV */
 
 char* CONF_PASSWORD = "password";
+char password[50] = "";
 uint16_t brightness_ref;
 uint8_t first_brightness_mesure = 0;
 uint16_t pressure_ref;
 uint8_t first_pressure_mesure = 0;
-uint16_t humidity_ref;
-uint8_t first_humidity_mesure = 0;
+uint16_t temperature_ref;
+uint8_t first_temperature_mesure = 0;
 uint64_t tick_1000ms_elapsed;
 /* USER CODE END PV */
 
@@ -69,6 +70,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 
+/**
+  * @brief  Check if system is disabled or not
+  * @retval bool
+  */
 uint8_t system_is_disabled() {
 	if (!LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_2) && !LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_8)) {
 		return 1;
@@ -79,12 +84,22 @@ uint8_t system_is_disabled() {
 	}
 }
 
+
+/**
+  * @brief  reset measures
+  * @retval None
+  */
 void reset_measure() { // reset measure
 	first_brightness_mesure = 0;
-	first_humidity_mesure = 0;
+	first_temperature_mesure = 0;
 	first_pressure_mesure = 0;
 }
 
+
+/**
+  * @brief  Enable system and activate alarm
+  * @retval None
+  */
 void enable_system() { // enable system
 	reset_measure();
 	// check if led are active or not
@@ -105,8 +120,47 @@ void enable_system() { // enable system
 
 }
 
+/**
+  * @brief  Disable system and check user password
+  * @retval None
+  */
 void disable_system() { // disable system
+	memset(password, '\0', sizeof(password));
+	char visible_password[50] = "";
 	if ((!LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_2) && !LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_8)) || LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_8)) {
+		printf("Veuillez saisir votre mot de passe:\r\n");
+		while(1) {
+			if (kbhit()) {
+				char c = getch();
+				int len = strlen(password);
+				int len_v = strlen(visible_password);
+
+				// reset password
+				if (c == '*') {
+					disable_system();
+					break;
+				}
+
+				if (c == 0x08) {
+					password[len] = '\0';
+					visible_password[len_v] = '\0';
+				} else {
+					// print password
+					visible_password[len_v] = '*';
+					visible_password[len_v+1] = '\0';
+					password[len] = c;
+					password[len+1] = '\0';
+				}
+
+
+				printf("Mot de passe:%s\r\n", visible_password);
+				// compare password
+				if (strcmp(password, CONF_PASSWORD) == 0) {
+					break;
+				}
+			}
+		}
+
 		printf("Désactivation du système\r\n"); //print system disabling
 		LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_2);
 		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_8);
@@ -122,14 +176,20 @@ void disable_system() { // disable system
 	}
 }
 
-void launch_alert() {
+
+/**
+  * @brief  Start alert sound
+  * @retval None
+  */
+void launch_alert(char* category) {
 	// start alarm
 	while (1) {
 		printf("ALERTE!! Système compromis\r\n");
+		printf("Erreur de %s\r\n", category);
 		LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_0); // set
-		LL_mDelay(200); // 500ms delay
+		LL_mDelay(100); // 500ms delay
 		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0); // reset
-		LL_mDelay(200); // 500ms delay
+		LL_mDelay(100); // 500ms delay
 		if (kbhit()) {
 			// stop alarm
 			if (getch() == 's') {
@@ -141,14 +201,21 @@ void launch_alert() {
 	}
 }
 
-void check_values(uint16_t ref, uint16_t current_value, uint16_t threshold) {
+/**
+  * @brief Compare current measure with references
+  * @retval None
+  */
+void check_values(uint16_t ref, uint16_t current_value, uint16_t threshold, char* category) {
 	// compare values with references
-	uint16_t check = ref - current_value;
-	if (check == threshold) {
-	  launch_alert();
+	if (current_value < (ref / 2) || current_value > (ref * 2)) {
+		launch_alert(category);
 	}
 }
 
+/**
+  * @brief  Measure brightness and update reference if it's first one
+  * @retval None
+  */
 void check_brightness(uint16_t threshold) {
 	// check brightness level
 	if (system_is_disabled() == 0) {
@@ -162,12 +229,16 @@ void check_brightness(uint16_t threshold) {
 		  brightness_ref = t;
 		  first_brightness_mesure = 1;
 		}
-		// compare values
-		check_values(brightness_ref, t, threshold);
 		printf("Brightness:%i\r\n\n", t);
+		// compare values
+		check_values(brightness_ref, t, threshold, "Luminosité");
 	}
 }
 
+/**
+  * @brief  Measure pressure level and update reference if it's first one
+  * @retval None
+  */
 void check_pressure(uint16_t threshold) {
 	// check pressure level
 	if (system_is_disabled() == 0) {
@@ -179,24 +250,30 @@ void check_pressure(uint16_t threshold) {
 		  pressure_ref = p;
 		  first_pressure_mesure = 1;
 		}
-		check_values(pressure_ref, p, threshold);
 		printf("Pressure:%i\r\n\n", p);
+		check_values(pressure_ref, p, threshold, "Pression");
 	}
 }
 
-void check_humidity(uint16_t threshold) {
-	// check humidity level
+/**
+  * @brief  Measure temperature and update reference if it's first one
+  * @retval None
+  */
+void check_temperature(uint16_t threshold) {
+	// check temperature level
 	if (system_is_disabled() == 0) {
 		LL_ADC_REG_SetSequencerChannels(ADC1, LL_ADC_CHANNEL_15);
 		LL_ADC_REG_StartConversion(ADC1);
 		while(!LL_ADC_IsActiveFlag_EOC(ADC1));
 		int h = LL_ADC_REG_ReadConversionData12(ADC1);
-		if (first_humidity_mesure == 0) {
-		  humidity_ref = h;
-		  first_humidity_mesure = 1;
+		if (first_temperature_mesure == 0) {
+		  temperature_ref = h;
+		  first_temperature_mesure = 1;
 		}
-		check_values(humidity_ref, h, threshold);
-		printf("Humidity:%i\r\n\n", h);
+		uint16_t tension = (h*3300) / 4096;
+		uint16_t temp = (tension - 500) / 10;
+		printf("Temperature:%i°c (%imV)\r\n\n", temp, tension);
+		check_values(temperature_ref, h, threshold, "Temperature");
 	}
 }
 
@@ -237,7 +314,7 @@ int main(void)
   getchInit();
   LL_USART_EnableIT_RXNE(USART2);
   printf("Ready !!!!\r\n"); //print it
-
+  // printf("\x1B[2J"); //Efface l'écran
   LL_ADC_Enable(ADC1);
   LL_SYSTICK_EnableIT();
   LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(ADC1),
@@ -250,24 +327,29 @@ int main(void)
   while (1)
   {
 	if (tick_1000ms_elapsed == 1) {
-		// each seconds
-		check_humidity(5000);
-		check_brightness(5000);
-		check_pressure(5000);
-		// reset tick
+		/* each seconds */
+		if (system_is_disabled() == 0) {
+			printf("\n---------------------------------------\r\n");
+			printf("\n------------ Parameters --------------- \r\n");
+			check_temperature(5000);
+			check_brightness(5000);
+			check_pressure(5000);
+			printf("---------------------------------------\r\n");
+		}
+		/* reset tick */
 		tick_1000ms_elapsed = 0;
 	}
-	if (kbhit()) //if one char received on USART2
+	if (kbhit()) /* if one char received on USART2 */
 	{
 	  switch(getch()) {
-	  case '1': // enable
+	  case '1': /* enable */
 		  enable_system();
 		  break;
-	  case '0': // disable
+	  case '0': /* disable */
 		  disable_system();
 		  break;
-	  case 'a': // launch alert
-		  launch_alert();
+	  case 'a': /* launch alert */
+		  launch_alert("manual");
 		  break;
 	  }
 	}

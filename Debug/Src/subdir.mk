@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Src/adc.c \
+../Src/artkeeper.c \
 ../Src/gpio.c \
 ../Src/main.c \
 ../Src/stm32l0xx_it.c \
@@ -16,6 +17,7 @@ C_SRCS += \
 
 OBJS += \
 ./Src/adc.o \
+./Src/artkeeper.o \
 ./Src/gpio.o \
 ./Src/main.o \
 ./Src/stm32l0xx_it.o \
@@ -26,6 +28,7 @@ OBJS += \
 
 C_DEPS += \
 ./Src/adc.d \
+./Src/artkeeper.d \
 ./Src/gpio.d \
 ./Src/main.d \
 ./Src/stm32l0xx_it.d \
@@ -42,7 +45,7 @@ Src/%.o Src/%.su: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/adc.d ./Src/adc.o ./Src/adc.su ./Src/gpio.d ./Src/gpio.o ./Src/gpio.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/stm32l0xx_it.d ./Src/stm32l0xx_it.o ./Src/stm32l0xx_it.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su ./Src/system_stm32l0xx.d ./Src/system_stm32l0xx.o ./Src/system_stm32l0xx.su ./Src/usart.d ./Src/usart.o ./Src/usart.su
+	-$(RM) ./Src/adc.d ./Src/adc.o ./Src/adc.su ./Src/artkeeper.d ./Src/artkeeper.o ./Src/artkeeper.su ./Src/gpio.d ./Src/gpio.o ./Src/gpio.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/stm32l0xx_it.d ./Src/stm32l0xx_it.o ./Src/stm32l0xx_it.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su ./Src/system_stm32l0xx.d ./Src/system_stm32l0xx.o ./Src/system_stm32l0xx.su ./Src/usart.d ./Src/usart.o ./Src/usart.su
 
 .PHONY: clean-Src
 
